@@ -19,3 +19,7 @@ export interface IUserWithImageCountPaginatedResponse {
   totalPages: number;
   page: number;
 }
+
+export interface IUserWithImageUrl extends IUser {
+  image: string;
+}

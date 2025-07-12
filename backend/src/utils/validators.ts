@@ -21,3 +21,33 @@ export function validateLimit(limit: number) {
 
   return null;
 }
+
+export function validateName(name: string){
+  return !name || name.trim().length < 2
+    ? 'Name must be at least 2 characters'
+    : null;
+}
+
+export function validateCity(city: string) {
+  return city && city.trim().length < 2
+    ? 'City must be at least 2 characters'
+    : null;
+}
+
+export function validateImageFile(file?: Express.Multer.File) {
+  if (!file) {
+    return 'Image file is required';
+  }
+
+  const allowedTypes = ['image/jpeg', 'image/png'];
+  if (!allowedTypes.includes(file.mimetype)) {
+    return 'Only JPG and PNG images are allowed';
+  }
+
+  const maxSize = 5 * 1024 * 1024; // 5MB
+  if (file.size > maxSize) {
+    return 'File size must not exceed 5MB';
+  }
+
+  return null;
+}

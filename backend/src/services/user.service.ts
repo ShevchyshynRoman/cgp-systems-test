@@ -94,9 +94,15 @@ async function getPaginatedUsersSortedByImageCount(
   };
 }
 
+async function createUser(user: IUserCreate): Promise<IUser> {
+  const createdUser = await UserModel.create(user);
+  return createdUser.toJSON();
+}
+
 export const userService = {
   generateFakeUsers,
   createMany,
   getAllUserIds,
   getPaginatedUsersSortedByImageCount,
+  createUser
 };
