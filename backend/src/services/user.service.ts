@@ -50,7 +50,7 @@ async function countUsersWithImages(): Promise<number> {
 }
 
 async function getUsersWithImageCount(
-  orderDirection: 'ASC' | 'DESC',
+  imageCountOrderDirection: 'ASC' | 'DESC',
   limit: number,
   offset: number
 ): Promise<IUserWithImageCount[]> {
@@ -67,7 +67,10 @@ async function getUsersWithImageCount(
       },
     ],
     group: ['UserModel.id'],
-    order: [[sequelize.literal(`"imageCount"`), orderDirection]],
+    order: [
+      [sequelize.literal(`"imageCount"`), imageCountOrderDirection],
+      ['id', 'DESC']
+    ],
     limit,
     offset,
     raw: true,
@@ -80,13 +83,13 @@ async function getUsersWithImageCount(
 }
 
 async function getUsersWithImageCountPaginated(
-  orderDirection: 'ASC' | 'DESC',
+  imageCountOrderDirection: 'ASC' | 'DESC',
   limit: number,
   page: number
 ): Promise<IUserWithImageCountPaginated> {
   const offset = (page - 1) * limit;
 
-  const users = await getUsersWithImageCount(orderDirection, limit, offset);
+  const users = await getUsersWithImageCount(imageCountOrderDirection, limit, offset);
   const totalCount = await countUsersWithImages();
   const totalPages = Math.ceil(totalCount / limit);
 
