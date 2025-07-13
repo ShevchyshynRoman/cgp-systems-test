@@ -6,10 +6,10 @@ import {
   IUser,
   IUserCreate,
   IUserWithImageCount,
-  IUserWithImageCountPaginatedResponse,
+  IUserWithImageCountPaginated,
 } from '../types/user';
 
-function generateFakeUsers(count: number): IUserCreate[] {
+function generateMockUsers(count: number): IUserCreate[] {
   return Array.from({ length: count }).map(
     (): IUserCreate => ({
       name: faker.person.firstName(),
@@ -23,11 +23,16 @@ async function getAllUserIds(): Promise<number[]> {
   return users.map((user) => user.id);
 }
 
-async function createMany(users: IUserCreate[]): Promise<void> {
+async function bulkCreateUsers(users: IUserCreate[]): Promise<void> {
   await UserModel.bulkCreate(users);
 }
 
-async function countGroupedUsers(): Promise<number> {
+async function createUser(user: IUserCreate): Promise<IUser> {
+  const createdUser = await UserModel.create(user);
+  return createdUser.toJSON();
+}
+
+async function countUsersWithImages(): Promise<number> {
   const result = await UserModel.findAll({
     attributes: ['id'],
     include: [
@@ -74,16 +79,16 @@ async function getUsersWithImageCount(
   }));
 }
 
-async function getPaginatedUsersSortedByImageCount(
+async function getUsersWithImageCountPaginated(
   orderDirection: 'ASC' | 'DESC',
   limit: number,
-  offset: number
-): Promise<IUserWithImageCountPaginatedResponse> {
-  const users = await getUsersWithImageCount(orderDirection, limit, offset);
+  page: number
+): Promise<IUserWithImageCountPaginated> {
+  const offset = (page - 1) * limit;
 
-  const totalCount = await countGroupedUsers();
+  const users = await getUsersWithImageCount(orderDirection, limit, offset);
+  const totalCount = await countUsersWithImages();
   const totalPages = Math.ceil(totalCount / limit);
-  const page = Math.floor(offset / limit) + 1;
 
   return {
     users,
@@ -94,15 +99,10 @@ async function getPaginatedUsersSortedByImageCount(
   };
 }
 
-async function createUser(user: IUserCreate): Promise<IUser> {
-  const createdUser = await UserModel.create(user);
-  return createdUser.toJSON();
-}
-
 export const userService = {
-  generateFakeUsers,
-  createMany,
+  generateMockUsers,
+  bulkCreateUsers,
   getAllUserIds,
-  getPaginatedUsersSortedByImageCount,
+  getUsersWithImageCountPaginated,
   createUser
 };

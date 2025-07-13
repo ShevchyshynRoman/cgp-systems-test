@@ -1,9 +1,9 @@
 export interface IUserImage {
-  id?: number;
+  id: number;
   image: string;
   userId: number;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export type IUserImageCreate = Pick<IUserImage, 'image' | 'userId'>;

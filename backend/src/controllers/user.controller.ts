@@ -12,12 +12,10 @@ import {
 import { userImageService } from '../services/user-image.service';
 import { IUserWithImageUrl } from '../types/user';
 
-async function getPaginatedUsersSortedByImageCount(req: Request, res: Response) {
+async function getUsersWithImageCountPaginated(req: Request, res: Response) {
   const order = (req.query.order as 'ASC' | 'DESC') || 'DESC';
   const page = parseInt(req.query.page as string, 10) || 1;
   const limit = parseInt(req.query.limit as string, 10) || 20;
-
-  const offset = (page - 1) * limit;
 
   const errors = {
     order: validateOrder(order),
@@ -29,15 +27,12 @@ async function getPaginatedUsersSortedByImageCount(req: Request, res: Response) 
     throw ApiError.BadRequest('Invalid query params', errors);
   }
 
-  const result = await userService.getPaginatedUsersSortedByImageCount(order, limit, offset);
+  const result = await userService.getUsersWithImageCountPaginated(order, limit, page);
 
-  res.json({
-    ...result,
-    page,
-  });
+  res.status(200).json(result);
 }
 
-async function createUserWithImage(req: Request, res: Response) {
+async function createUserWithImageUpload(req: Request, res: Response) {
   const { name, city } = req.body;
   const file = req.file;
 
@@ -45,7 +40,7 @@ async function createUserWithImage(req: Request, res: Response) {
     name: validateName(name),
     city: validateCity(city),
     file: validateImageFile(file),
-  }
+  };
 
   if (errors.name || errors.city || errors.file) {
     throw ApiError.BadRequest('Invalid body params', errors);
@@ -53,17 +48,17 @@ async function createUserWithImage(req: Request, res: Response) {
 
   const user = await userService.createUser({ name, city });
 
-  const imageUrl = await userImageService.saveFile(user.id!, file!);
+  const imageUrl = await userImageService.saveUserImageFile(user.id, file!);
 
   const userWithImageUrl: IUserWithImageUrl = {
     ...user,
     image: imageUrl,
-  }
+  };
 
-  res.status(201).json(userWithImageUrl)
+  res.status(201).json(userWithImageUrl);
 }
 
 export const userController = {
-  getPaginatedUsersSortedByImageCount,
-  createUserWithImage
+  getUsersWithImageCountPaginated,
+  createUserWithImageUpload,
 };

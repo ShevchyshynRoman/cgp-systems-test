@@ -1,9 +1,9 @@
 export interface IUser {
-  id?: number;
+  id: number;
   name: string;
   city: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export type IUserCreate = Pick<IUser, 'name' | 'city'>;
@@ -12,7 +12,7 @@ export interface IUserWithImageCount extends IUser {
   imageCount: number;
 }
 
-export interface IUserWithImageCountPaginatedResponse {
+export interface IUserWithImageCountPaginated {
   users: IUserWithImageCount[];
   totalCount: number;
   pageSize: number;

@@ -5,6 +5,6 @@ import { upload } from '../middlewares/upload.middleware';
 
 export const userRouter = express.Router();
 
-userRouter.get(`/`, catchError(userController.getPaginatedUsersSortedByImageCount));
+userRouter.get(`/`, catchError(userController.getUsersWithImageCountPaginated));
 
-userRouter.post('/', upload.single('image'), catchError(userController.createUserWithImage))
+userRouter.post('/', upload.single('image'), catchError(userController.createUserWithImageUpload));
