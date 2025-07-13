@@ -28,7 +28,7 @@ export class UserModel extends Model<IUser, IUserCreate> implements IUser {
   @Column(DataType.STRING)
   name!: string;
 
-  @AllowNull(true)
+  @AllowNull(false)
   @Column(DataType.STRING)
   city!: string;
 
